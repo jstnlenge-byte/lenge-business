@@ -160,6 +160,7 @@
 
   <footer>© <span id="year"></span> LENGE BUSINESS</footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const translations = {
       fr: {
@@ -222,11 +223,58 @@
 
     // Catalogue initial volontairement vide : ajoute uniquement tes vrais produits.
     // Pour chaque produit, renseigne son nom, son prix, sa catégorie et sa photo.
-    const products = [];
+    const SUPABASE_URL = "https://uvntzpcwlanxctmgpjpv.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_bRSSwChqth0l0qvazC8IqA_ByOcvxld";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    let products = [];
 
     const languageSelect = document.getElementById("language");
     const searchInput = document.getElementById("search");
     const categorySelect = document.getElementById("category");
+
+    async function loadPublicCatalog() {
+      const { data: categories, error: categoryError } =
+        await supabaseClient
+          .from("categories")
+          .select("id,name")
+          .order("name");
+
+      if (categoryError) throw categoryError;
+
+      categorySelect.replaceChildren();
+
+      const allOption = document.createElement("option");
+      allOption.value = "all";
+      allOption.dataset.i18n = "all";
+      allOption.textContent =
+        (translations[currentLanguage()] || translations.fr).all;
+      categorySelect.appendChild(allOption);
+
+      for (const category of categories || []) {
+        const option = document.createElement("option");
+        option.value = String(category.id);
+        option.textContent = category.name;
+        categorySelect.appendChild(option);
+      }
+
+      const { data, error } = await supabaseClient
+        .from("products")
+        .select("id,name,description,price,category_id,image_url,stock,is_available,created_at")
+        .eq("is_available", true)
+        .gt("stock", 0)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      products = data || [];
+      renderProducts();
+    }
 
     function currentLanguage() {
       return languageSelect.value;
@@ -257,8 +305,9 @@
       container.replaceChildren();
 
       const filtered = products.filter(product =>
-        product.name.toLowerCase().includes(query) &&
-        (category === "all" || product.category === category)
+        String(product.name || "").toLowerCase().includes(query) &&
+        (category === "all" ||
+          String(product.category_id) === category)
       );
 
       document.getElementById("empty").hidden = filtered.length > 0;
@@ -268,7 +317,7 @@
         card.className = "card";
 
         const img = document.createElement("img");
-        img.src = product.image;
+        img.src = product.image_url || "images/backgrounds/boutique.jpg";
         img.alt = product.name;
         img.loading = "lazy";
 
@@ -280,7 +329,9 @@
 
         const price = document.createElement("p");
         price.className = "price";
-        price.textContent = product.price;
+        price.textContent = new Intl.NumberFormat("fr-FR", {
+          maximumFractionDigits: 2
+        }).format(Number(product.price) || 0);
 
         const order = document.createElement("a");
         order.className = "button";
@@ -290,7 +341,10 @@
         order.target = "_blank";
         order.rel = "noopener";
 
-        content.append(title, price, order);
+        const description = document.createElement("p");
+        description.textContent = product.description || "";
+
+        content.append(title, description, price, order);
         card.append(img, content);
         container.append(card);
       });
@@ -312,6 +366,14 @@
     document.getElementById("year").textContent = new Date().getFullYear();
 
     translatePage();
+
+    loadPublicCatalog().catch(error => {
+      console.error("Erreur de chargement du catalogue :", error);
+      const empty = document.getElementById("empty");
+      empty.hidden = false;
+      empty.textContent =
+        "Impossible de charger les produits. Vérifie ta connexion Internet puis recharge la page.";
+    });
   </script>
 </body>
 </html>
