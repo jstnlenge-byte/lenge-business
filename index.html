@@ -509,8 +509,21 @@
         const order = document.createElement("a");
         order.className = "button";
         order.textContent = lang.order;
+        const prixCommande = new Intl.NumberFormat("fr-FR", {
+          maximumFractionDigits: 2
+        }).format(Number(product.price) || 0);
+
+        const messageCommande =
+          "Bonjour LENGE BUSINESS ! 👋\n\n" +
+          "Je souhaite commander ce produit :\n" +
+          "🛍️ Produit : " + product.name + "\n" +
+          "💰 Prix affiché : " + prixCommande + "\n" +
+          "📦 Quantité souhaitée : 1\n" +
+          "🚚 Livraison : merci de me préciser les frais et délais.\n\n" +
+          "Le produit est-il disponible ? Merci !";
+
         order.href = "https://wa.me/243998505243?text=" +
-          encodeURIComponent("Bonjour, je souhaite commander : " + product.name + " (" + product.price + ")");
+          encodeURIComponent(messageCommande);
         order.target = "_blank";
         order.rel = "noopener";
 
