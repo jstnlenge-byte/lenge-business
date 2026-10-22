@@ -110,6 +110,178 @@
       .tools { grid-template-columns: 1fr; }
       header { align-items: flex-start; }
     }
+
+    /* LENGE BUSINESS — DESIGN PREMIUM */
+
+    :root {
+      --bg: #090d16;
+      --panel: #141b29;
+      --text: #ffffff;
+      --muted: #c6ccda;
+      --gold: #f5c451;
+      --border: #574725;
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse at top, #20263a 0%, #090d16 65%);
+      background-color: var(--bg);
+    }
+
+    header {
+      position: relative;
+      padding: 20px;
+      background: rgba(9, 13, 22, 0.94);
+      border-bottom: 1px solid rgba(245, 196, 81, 0.45);
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .brand {
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 16px rgba(245, 196, 81, 0.2);
+    }
+
+    .brand span {
+      color: var(--gold);
+      text-shadow: 0 0 12px rgba(245, 196, 81, 0.4);
+    }
+
+    .hero {
+      position: relative;
+      isolation: isolate;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(9, 13, 22, 0.28), rgba(9, 13, 22, 0.48)),
+        var(--hero-image, linear-gradient(135deg, #243b55, #141e30));
+      background-size: cover;
+      background-position: center;
+      border-bottom: 1px solid rgba(245, 196, 81, 0.35);
+    }
+
+    .hero h1 {
+      max-width: 900px;
+      color: #fff;
+      text-shadow: 0 3px 18px #000, 0 0 24px rgba(245, 196, 81, 0.28);
+      animation: lengeIntro 0.8s ease-out both;
+    }
+
+    .hero p {
+      color: #fff;
+      text-shadow: 0 2px 8px #000;
+      animation: lengeIntro 1s ease-out both;
+    }
+
+    .button {
+      border: 1px solid rgba(255, 230, 160, 0.6);
+      border-radius: 12px;
+      box-shadow: 0 5px 18px rgba(245, 196, 81, 0.15);
+      transition: transform 0.2s ease, box-shadow 0.2s ease,
+                  background 0.2s ease;
+    }
+
+    .button:hover {
+      background: #ffda78;
+      box-shadow: 0 0 25px rgba(245, 196, 81, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+    }
+
+    main {
+      padding-top: 34px;
+      padding-bottom: 40px;
+    }
+
+    h2 {
+      color: var(--gold);
+      letter-spacing: 0.4px;
+    }
+
+    .tools input,
+    .tools select,
+    header select {
+      border-color: rgba(245, 196, 81, 0.35);
+      background-color: #111827;
+    }
+
+    .card {
+      background: linear-gradient(150deg, #1a2435, #101622);
+      border: 1px solid rgba(245, 196, 81, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2);
+      transition: transform 0.22s ease, border-color 0.22s ease,
+                  box-shadow 0.22s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(245, 196, 81, 0.75);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32),
+                  0 0 16px rgba(245, 196, 81, 0.08);
+    }
+
+    .card img {
+      background: #0b101b;
+    }
+
+    .card-content {
+      overflow-wrap: anywhere;
+    }
+
+    .price {
+      font-size: 1.08rem;
+      color: #ffd56c;
+    }
+
+    .contact {
+      background: linear-gradient(145deg, #1b2638, #101622);
+      border: 1px solid rgba(245, 196, 81, 0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    footer {
+      border-top: 1px solid rgba(245, 196, 81, 0.22);
+      background: rgba(9, 13, 22, 0.7);
+    }
+
+    @keyframes lengeIntro {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .hero {
+        min-height: 280px;
+        padding: 42px 16px;
+      }
+
+      .card img {
+        height: 145px;
+      }
+
+      .card:hover {
+        transform: none;
+      }
+    }
+
   </style>
     <meta name="google-site-verification" content="QG7jK1yEImnLWJb3qgbttcn5kSbBJxA2fg9pX3qkDDk" />
 </head>
