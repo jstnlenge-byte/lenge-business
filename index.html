@@ -513,11 +513,19 @@
           maximumFractionDigits: 2
         }).format(Number(product.price) || 0);
 
+        const lienPhoto = product.image_url
+          ? new URL(product.image_url, window.location.href).href
+          : "";
+
+        const lienBoutique = "https://lenge-business.pages.dev/#products";
+
         const messageCommande =
           "Bonjour LENGE BUSINESS ! 👋\n\n" +
           "Je souhaite commander ce produit :\n" +
           "🛍️ Produit : " + product.name + "\n" +
           "💰 Prix affiché : " + prixCommande + "\n" +
+          (lienPhoto ? "🖼️ Photo du produit : " + lienPhoto + "\n" : "") +
+          "🔗 Voir la boutique : " + lienBoutique + "\n" +
           "📦 Quantité souhaitée : 1\n" +
           "🚚 Livraison : merci de me préciser les frais et délais.\n\n" +
           "Le produit est-il disponible ? Merci !";
