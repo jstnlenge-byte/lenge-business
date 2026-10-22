@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administration | LENGE BUSINESS</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 18px;
+      font-family: Arial, sans-serif;
+      background: #f2f4f7;
+      color: #172033;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: auto;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 22px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+
+    h1 { margin: 0 0 8px; }
+    h2 { margin-top: 0; }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 14px;
+      box-shadow: 0 3px 12px #0000000c;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 7px 0;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 16px;
+    }
+
+    textarea {
+      min-height: 85px;
+      resize: vertical;
+    }
+
+    button {
+      background: #146c43;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .secondary { background: #374151; }
+    .danger { background: #b91c1c; }
+    .hidden { display: none !important; }
+
+    .notice {
+      padding: 12px;
+      background: #e5e7eb;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      overflow-wrap: anywhere;
+    }
+
+    .product {
+      border: 1px solid #e5e7eb;
+      padding: 12px;
+      border-radius: 10px;
+      margin: 12px 0;
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 12px;
+    }
+
+    .product img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #eee;
+    }
+
+    .product h3 { margin: 3px 0 8px; }
+    .product p { overflow-wrap: anywhere; }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .small { font-size: 13px; color: #6b7280; }
+
+    @media (max-width: 480px) {
+      body { padding: 10px; }
+      .card { padding: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <header>
+    <h1>🏪 LENGE BUSINESS</h1>
+    <p>Espace d'administration de la boutique</p>
+  </header>
+
+  <div id="message" class="notice" role="status">
+    Chargement de l'administration...
+  </div>
+
+  <section id="loginSection" class="card">
+    <h2>🔐 Connexion administrateur</h2>
+    <form id="loginForm">
+      <label for="email">Adresse e-mail</label>
+      <input id="email" type="email"
+        autocomplete="username"
+        value="jstnlenge@gmail.com"
+        required>
+
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password"
+        autocomplete="current-password"
+        required>
+
+      <button type="submit">Se connecter</button>
+    </form>
+    <p class="small">
+      Seul le compte administrateur autorisé peut gérer les produits.
+    </p>
+  </section>
+
+  <section id="dashboard" class="hidden">
+
+    <div class="card">
+      <h2>👤 Mon compte</h2>
+      <p id="account"></p>
+      <button id="logout" class="secondary">Se déconnecter</button>
+    </div>
+
+    <div class="card">
+      <h2>📂 Catégories</h2>
+      <form id="categoryForm">
+        <label for="categoryName">Nouvelle catégorie</label>
+        <input id="categoryName"
+          placeholder="Ex. Vêtements, Téléphones, Chaussures"
+          required>
+        <button type="submit">Ajouter la catégorie</button>
+      </form>
+      <div id="categoriesList"></div>
+    </div>
+
+    <div class="card">
+      <h2 id="formTitle">➕ Ajouter un produit</h2>
+
+      <form id="productForm">
+        <input id="productId" type="hidden">
+
+        <label for="productName">Nom du produit *</label>
+        <input id="productName"
+          placeholder="Ex. Téléphone Samsung"
+          required maxlength="150">
+
+        <label for="productPrice">Prix *</label>
+        <input id="productPrice"
+          type="number" min="0" step="0.01"
+          placeholder="Ex. 150"
+          required>
+
+        <label for="productCategory">Catégorie</label>
+        <select id="productCategory">
+          <option value="">Sans catégorie</option>
+        </select>
+
+        <label for="productDescription">Description</label>
+        <textarea id="productDescription"
+          placeholder="Décris le produit..."></textarea>
+
+        <label for="productStock">Quantité en stock</label>
+        <input id="productStock"
+          type="number" min="0" step="1" value="1" required>
+
+        <label for="productImage">Photo du produit</label>
+        <input id="productImage"
+          type="file"
+          accept="image/jpeg,image/png,image/webp">
+
+        <p class="small">
+          Formats autorisés : JPG, PNG et WebP. Taille maximale : 5 MB.
+          Pour modifier un produit, choisis une nouvelle photo seulement
+          si tu souhaites remplacer l'ancienne.
+        </p>
+
+        <button id="saveProduct" type="submit">
+          Enregistrer le produit
+        </button>
+
+        <button id="cancelEdit"
+          class="secondary hidden"
+          type="button">
+          Annuler la modification
+        </button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>📦 Mes produits</h2>
+      <input id="searchProducts"
+        placeholder="Rechercher dans mes produits...">
+      <div id="productsList"></div>
+    </div>
+
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+(() => {
+  "use strict";
+
+  // CONFIGURATION DE SUPABASE
+  const SUPABASE_URL =
+    "https://uvntzpcwlanxctmgpjpv.supabase.co";
+
+  // Remplace cette valeur par ta Publishable key.
+  // Ne mets JAMAIS une clé secret ou service_role ici.
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_bRSSwChqth0l0qvazC8IqA_ByOcvxld";
+
+  const ADMIN_EMAIL = "jstnlenge@gmail.com";
+  const BUCKET = "product-images";
+
+  const $ = id => document.getElementById(id);
+
+  const message = $("message");
+  const loginSection = $("loginSection");
+  const dashboard = $("dashboard");
+
+  let supabase;
+  let categories = [];
+  let products = [];
+
+  function notify(text) {
+    message.textContent = text;
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+  }
+
+  function money(value) {
+    return new Intl.NumberFormat("fr-FR", {
+      maximumFractionDigits: 2
+    }).format(Number(value) || 0);
+  }
+
+  function setBusy(button, busy, text) {
+    button.disabled = busy;
+    if (busy) {
+      button.dataset.oldText = button.textContent;
+      button.textContent = text || "Patiente...";
+    } else {
+      button.textContent = button.dataset.oldText || button.textContent;
+    }
+  }
+
+  function requireConfig() {
+    if (!window.supabase) {
+      throw new Error("Impossible de charger la bibliothèque Supabase. Vérifie ta connexion Internet.");
+    }
+
+    if (
+      !SUPABASE_PUBLISHABLE_KEY ||
+      SUPABASE_PUBLISHABLE_KEY === "COLLE_TA_CLE_PUBLISHABLE_ICI"
+    ) {
+      throw new Error("Ajoute ta Publishable key dans admin.html avant de continuer.");
+    }
+
+    supabase = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+  }
+
+  async function getCurrentAdmin() {
+    const { data, error } = await supabase.auth.getUser();
+
+    if (error) throw error;
+
+    const user = data.user;
+
+    if (!user || user.email?.toLowerCase() !== ADMIN_EMAIL) {
+      await supabase.auth.signOut();
+      throw new Error("Accès refusé : ce compte n'est pas autorisé.");
+    }
+
+    return user;
+  }
+
+  async function showDashboard() {
+    const user = await getCurrentAdmin();
+
+    loginSection.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    $("account").textContent = user.email;
+
+    await loadCategories();
+    await loadProducts();
+
+    notify("Connexion réussie. Tu peux gérer ta boutique.");
+  }
+
+  async function loadCategories() {
+    const { data, error } = await supabase
+      .from("categories")
+      .select("id,name")
+      .order("name");
+
+    if (error) throw error;
+
+    categories = data || [];
+
+    $("productCategory").innerHTML =
+      '<option value="">Sans catégorie</option>' +
+      categories.map(c =>
+        `<option value="${c.id}">${escapeHTML(c.name)}</option>`
+      ).join("");
+
+    $("categoriesList").innerHTML = categories.length
+      ? categories.map(c =>
+          `<p>${escapeHTML(c.name)}</p>`
+        ).join("")
+      : "<p>Aucune catégorie. Ajoute-en une ci-dessus.</p>";
+  }
+
+  async function loadProducts() {
+    const { data, error } = await supabase
+      .from("products")
+      .select("id,name,description,price,category_id,image_url,stock,is_available,created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    products = data || [];
+    renderProducts();
+  }
+
+  function renderProducts() {
+    const query = $("searchProducts").value.trim().toLowerCase();
+
+    const filtered = products.filter(p =>
+      String(p.name).toLowerCase().includes(query) ||
+      String(p.description || "").toLowerCase().includes(query)
+    );
+
+    if (!filtered.length) {
+      $("productsList").innerHTML = "<p>Aucun produit à afficher.</p>";
+      return;
+    }
+
+    $("productsList").innerHTML = filtered.map(p => {
+      const cat = categories.find(c => c.id === p.category_id);
+      const photo = p.image_url
+        ? `<img src="${escapeHTML(p.image_url)}" alt="Photo du produit">`
+        : `<div aria-label="Pas de photo">🛍️</div>`;
+
+      return `
+        <article class="product">
+          ${photo}
+          <div>
+            <h3>${escapeHTML(p.name)}</h3>
+            <p><strong>Prix :</strong> ${money(p.price)}</p>
+            <p><strong>Catégorie :</strong> ${escapeHTML(cat?.name || "Sans catégorie")}</p>
+            <p><strong>Stock :</strong> ${Number(p.stock) || 0}</p>
+            <p>${escapeHTML(p.description || "")}</p>
+            <p>${p.is_available ? "✅ Disponible" : "⛔ Indisponible"}</p>
+            <div class="actions">
+              <button type="button" data-edit="${p.id}">Modifier</button>
+              <button type="button" class="secondary"
+                data-toggle="${p.id}">
+                ${p.is_available ? "Masquer" : "Publier"}
+              </button>
+              <button type="button" class="danger"
+                data-delete="${p.id}">Supprimer</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function resetProductForm() {
+    $("productForm").reset();
+    $("productId").value = "";
+    $("productStock").value = "1";
+    $("formTitle").textContent = "➕ Ajouter un produit";
+    $("saveProduct").textContent = "Enregistrer le produit";
+    $("cancelEdit").classList.add("hidden");
+  }
+
+  async function uploadImage(file) {
+    if (!file) return "";
+
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowed.includes(file.type)) {
+      throw new Error("Choisis une image JPG, PNG ou WebP.");
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error("La photo dépasse la limite de 5 MB.");
+    }
+
+    const extension = ({
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp"
+    })[file.type];
+
+    const path =
+      Date.now() + "-" +
+      crypto.randomUUID() + "." + extension;
+
+    const { error } = await supabase.storage
+      .from(BUCKET)
+      .upload(path, file, {
+        contentType: file.type,
+        upsert: false
+      });
+
+    if (error) throw error;
+
+    const { data } = supabase.storage
+      .from(BUCKET)
+      .getPublicUrl(path);
+
+    return data.publicUrl;
+  }
+
+  $("loginForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const button = event.submitter;
+    setBusy(button, true, "Connexion...");
+
+    try {
+      requireConfig();
+
+      const email = $("email").value.trim().toLowerCase();
+      const password = $("password").value;
+
+      if (email !== ADMIN_EMAIL) {
+        throw new Error("Cette adresse e-mail n'est pas autorisée.");
+      }
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+
+      $("password").value = "";
+      await showDashboard();
+
+    } catch (error) {
+      notify(error.message || "Erreur de connexion.");
+    } finally {
+      setBusy(button, false);
+    }
+  });
+
+  $("logout").addEventListener("click", async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      dashboard.classList.add("hidden");
+      loginSection.classList.remove("hidden");
+      notify("Tu es déconnecté.");
+    } catch (error) {
+      notify(error.message);
+    }
+  });
+
+  $("categoryForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const button = event.submitter;
+    setBusy(button, true, "Ajout...");
+
+    try {
+      await getCurrentAdmin();
+
+      const name = $("categoryName").value.trim();
+      if (!name) throw new Error("Saisis le nom de la catégorie.");
+
+      const { error } = await supabase
+        .from("categories")
+        .insert({ name });
+
+      if (error) throw error;
+
+      $("categoryName").value = "";
+      await loadCategories();
+      notify("Catégorie ajoutée avec succès.");
+
+    } catch (error) {
+      notify(error.message || "Impossible d'ajouter la catégorie.");
+    } finally {
+      setBusy(button, false);
+    }
+  });
+
+  $("productForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const button = $("saveProduct");
+    setBusy(button, true, "Enregistrement...");
+
+    try {
+      await getCurrentAdmin();
+
+      const id = $("productId").value;
+      const name = $("productName").value.trim();
+      const price = Number($("productPrice").value);
+      const stock = Number($("productStock").value);
+      const categoryValue = $("productCategory").value;
+      const description = $("productDescription").value.trim();
+      const file = $("productImage").files[0];
+
+      if (!name) throw new Error("Le nom du produit est obligatoire.");
+      if (!Number.isFinite(price) || price < 0) {
+        throw new Error("Le prix doit être un nombre positif.");
+      }
+      if (!Number.isInteger(stock) || stock < 0) {
+        throw new Error("Le stock doit être un entier positif ou nul.");
+      }
+
+      let image_url = "";
+
+      if (id) {
+        const existing = products.find(p => String(p.id) === id);
+        image_url = existing?.image_url || "";
+      }
+
+      if (file) {
+        image_url = await uploadImage(file);
+      }
+
+      const payload = {
+        name,
+        description,
+        price,
+        stock,
+        category_id: categoryValue ? Number(categoryValue) : null,
+        image_url,
+        is_available: stock > 0
+      };
+
+      let result;
+
+      if (id) {
+        result = await supabase
+          .from("products")
+          .update(payload)
+          .eq("id", Number(id));
+      } else {
+        result = await supabase
+          .from("products")
+          .insert(payload);
+      }
+
+      if (result.error) throw result.error;
+
+      resetProductForm();
+      await loadProducts();
+
+      notify(id
+        ? "Produit modifié avec succès."
+        : "Produit ajouté avec succès.");
+
+    } catch (error) {
+      notify(error.message || "Impossible d'enregistrer le produit.");
+    } finally {
+      setBusy(button, false);
+    }
+  });
+
+  $("cancelEdit").addEventListener("click", resetProductForm);
+
+  $("searchProducts").addEventListener("input", renderProducts);
+
+  $("productsList").addEventListener("click", async event => {
+    const editId = event.target.dataset.edit;
+    const deleteId = event.target.dataset.delete;
+    const toggleId = event.target.dataset.toggle;
+
+    if (!editId && !deleteId && !toggleId) return;
+
+    try {
+      await getCurrentAdmin();
+
+      if (editId) {
+        const p = products.find(item => String(item.id) === editId);
+        if (!p) return;
+
+        $("productId").value = p.id;
+        $("productName").value = p.name;
+        $("productPrice").value = p.price;
+        $("productCategory").value = p.category_id ?? "";
+        $("productDescription").value = p.description || "";
+        $("productStock").value = p.stock;
+        $("productImage").value = "";
+
+        $("formTitle").textContent = "✏️ Modifier le produit";
+        $("saveProduct").textContent = "Enregistrer les modifications";
+        $("cancelEdit").classList.remove("hidden");
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        notify("Modifie les informations puis enregistre.");
+        return;
+      }
+
+      if (deleteId) {
+        const p = products.find(item => String(item.id) === deleteId);
+        if (!p) return;
+
+        if (!confirm(`Supprimer le produit « ${p.name} » ? Cette action est irréversible.`)) {
+          return;
+        }
+
+        const { error } = await supabase
+          .from("products")
+          .delete()
+          .eq("id", Number(deleteId));
+
+        if (error) throw error;
+
+        await loadProducts();
+        notify("Produit supprimé. La photo stockée pourra être supprimée séparément.");
+        return;
+      }
+
+      if (toggleId) {
+        const p = products.find(item => String(item.id) === toggleId);
+        if (!p) return;
+
+        const { error } = await supabase
+          .from("products")
+          .update({ is_available: !p.is_available })
+          .eq("id", Number(toggleId));
+
+        if (error) throw error;
+
+        await loadProducts();
+        notify("Disponibilité mise à jour.");
+      }
+
+    } catch (error) {
+      notify(error.message || "L'opération a échoué.");
+    }
+  });
+
+  async function start() {
+    try {
+      requireConfig();
+
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+
+      if (data.session) {
+        await showDashboard();
+      } else {
+        loginSection.classList.remove("hidden");
+        dashboard.classList.add("hidden");
+        notify("Connecte-toi avec ton compte administrateur.");
+      }
+    } catch (error) {
+      notify(error.message || "Configuration incomplète.");
+    }
+  }
+
+  start();
+})();
+</script>
+
+</body>
+</html>
