@@ -821,5 +821,41 @@
         "Impossible de charger les produits. Vérifie ta connexion Internet puis recharge la page.";
     });
   </script>
+
+  <div id="lengeWelcomeVoice" style="position:fixed;bottom:20px;right:16px;z-index:9999;">
+    <button id="lengeWelcomeButton" type="button"
+      style="background:#c9a227;color:#111;border:0;border-radius:25px;padding:12px 18px;font-weight:bold;cursor:pointer;box-shadow:0 4px 14px #0005;">
+      🔊 Écouter l'accueil
+    </button>
+  </div>
+  <script>
+  (() => {
+    const button = document.getElementById('lengeWelcomeButton');
+    if (!button || !('speechSynthesis' in window)) return;
+
+    function welcome() {
+      window.speechSynthesis.cancel();
+      const message = new SpeechSynthesisUtterance(
+        "Bienvenue chez LENGE BUSINESS ! Nous sommes ravis de vous accueillir. Découvrez nos produits et profitez d'une excellente expérience d'achat. Merci de votre confiance !"
+      );
+      message.lang = 'fr-FR';
+      message.rate = 0.9;
+      message.pitch = 0.85;
+
+      const voices = window.speechSynthesis.getVoices();
+      const frenchVoices = voices.filter(v => v.lang.toLowerCase().startsWith('fr'));
+      const maleVoice = frenchVoices.find(v =>
+        /male|homme|henri|paul|thomas/i.test(v.name)
+      );
+      if (maleVoice) message.voice = maleVoice;
+
+      window.speechSynthesis.speak(message);
+      button.textContent = '🔊 Réécouter l’accueil';
+    }
+
+    button.addEventListener('click', welcome);
+  })();
+  </script>
+
 </body>
 </html>
