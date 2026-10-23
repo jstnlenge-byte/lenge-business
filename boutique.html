@@ -878,6 +878,17 @@
 
         const img = document.createElement("img");
         img.src = product.image_url || "images/backgrounds/boutique.jpg";
+        img.classList.add("product-zoom-image");
+        img.style.cursor = "zoom-in";
+        img.tabIndex = 0;
+        img.alt = product.name || "Photo du produit";
+        img.addEventListener("click", () => ouvrirPhotoProduit(img.src, img.alt));
+        img.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            ouvrirPhotoProduit(img.src, img.alt);
+          }
+        });
         img.alt = product.name;
         img.loading = "lazy";
 
@@ -982,6 +993,87 @@
       }, 1500);
     });
   })();
+  </script>
+
+
+  <div id="product-image-modal" hidden
+       role="dialog" aria-modal="true" aria-label="Photo agrandie du produit">
+    <button type="button" id="product-image-close" aria-label="Fermer la photo">&times;</button>
+    <img id="product-image-large" src="" alt="">
+    <p id="product-image-caption"></p>
+  </div>
+
+  <style>
+    #product-image-modal[hidden] {
+      display: none !important;
+    }
+    #product-image-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.94);
+    }
+    #product-image-large {
+      display: block;
+      max-width: 94vw;
+      max-height: 82vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+    #product-image-caption {
+      color: white;
+      text-align: center;
+      margin: 12px 0 0;
+    }
+    #product-image-close {
+      position: absolute;
+      top: 8px;
+      right: 18px;
+      border: 0;
+      background: transparent;
+      color: white;
+      font-size: 42px;
+      cursor: pointer;
+    }
+    .product-zoom-image {
+      cursor: zoom-in;
+    }
+  </style>
+
+  <script>
+    function ouvrirPhotoProduit(src, titre) {
+      const modal = document.getElementById("product-image-modal");
+      document.getElementById("product-image-large").src = src;
+      document.getElementById("product-image-large").alt = titre;
+      document.getElementById("product-image-caption").textContent = titre;
+      modal.hidden = false;
+      document.body.style.overflow = "hidden";
+    }
+
+    function fermerPhotoProduit() {
+      const modal = document.getElementById("product-image-modal");
+      modal.hidden = true;
+      document.getElementById("product-image-large").src = "";
+      document.body.style.overflow = "";
+    }
+
+    document.getElementById("product-image-close").addEventListener("click", fermerPhotoProduit);
+
+    document.getElementById("product-image-modal").addEventListener("click", function(event) {
+      if (event.target === this) fermerPhotoProduit();
+    });
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape") fermerPhotoProduit();
+    });
   </script>
 
 </body>
