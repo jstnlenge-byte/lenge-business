@@ -831,29 +831,45 @@
   <script>
   (() => {
     const button = document.getElementById('lengeWelcomeButton');
-    if (!button || !('speechSynthesis' in window)) return;
+    if (!button || !('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
+      if (button) button.textContent = 'Voix non prise en charge';
+      return;
+    }
 
     function welcome() {
-      window.speechSynthesis.cancel();
+      const synth = window.speechSynthesis;
+      synth.cancel();
+
       const message = new SpeechSynthesisUtterance(
         "Bienvenue chez LENGE BUSINESS ! Nous sommes ravis de vous accueillir. Découvrez nos produits et profitez d'une excellente expérience d'achat. Merci de votre confiance !"
       );
       message.lang = 'fr-FR';
       message.rate = 0.9;
-      message.pitch = 0.85;
+      message.pitch = 0.8;
 
-      const voices = window.speechSynthesis.getVoices();
-      const frenchVoices = voices.filter(v => v.lang.toLowerCase().startsWith('fr'));
-      const maleVoice = frenchVoices.find(v =>
-        /male|homme|henri|paul|thomas/i.test(v.name)
-      );
-      if (maleVoice) message.voice = maleVoice;
+      const voices = synth.getVoices();
+      const frenchVoice = voices.find(v => v.lang.toLowerCase().startsWith('fr'));
+      if (frenchVoice) message.voice = frenchVoice;
 
-      window.speechSynthesis.speak(message);
-      button.textContent = '🔊 Réécouter l’accueil';
+      message.onstart = () => {
+        button.textContent = '🔊 La bienvenue est en cours...';
+      };
+      message.onend = () => {
+        button.textContent = '🔊 Réécouter l’accueil';
+      };
+      message.onerror = (event) => {
+        button.textContent = 'Réessayer la voix';
+        console.error('Erreur vocale :', event.error);
+      };
+
+      synth.speak(message);
     }
 
     button.addEventListener('click', welcome);
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.addEventListener('voiceschanged', () => {
+      window.speechSynthesis.getVoices();
+    });
   })();
   </script>
 
