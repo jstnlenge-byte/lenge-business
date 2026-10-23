@@ -340,6 +340,60 @@
       .cart-row { grid-template-columns: 1fr; }
     }
 
+
+    /* LENGE BUSINESS : animations premium noir et or */
+    .hero {
+      isolation: isolate;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 15% 30%, rgba(245,196,81,.25), transparent 35%),
+        radial-gradient(ellipse at 85% 65%, rgba(245,196,81,.20), transparent 32%);
+      animation: lengeGlow 10s ease-in-out infinite alternate;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: .55;
+      background-image:
+        radial-gradient(circle, #ffe8a0 1px, transparent 2px),
+        radial-gradient(circle, #f5c451 1.5px, transparent 3px),
+        radial-gradient(circle, #ffffff 1px, transparent 2px);
+      background-size: 95px 110px, 145px 160px, 190px 130px;
+      animation: lengeParticles 18s linear infinite;
+    }
+
+    .hero > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes lengeGlow {
+      from { transform: translate(-2%, -1%) scale(1); }
+      to { transform: translate(2%, 1%) scale(1.08); }
+    }
+
+    @keyframes lengeParticles {
+      from { background-position: 0 0, 35px 55px, 70px 20px; }
+      to { background-position: 95px -220px, -110px -180px, 260px -260px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero::before, .hero::after {
+        animation: none !important;
+      }
+    }
+
   </style>
     <meta name="google-site-verification" content="QG7jK1yEImnLWJb3qgbttcn5kSbBJxA2fg9pX3qkDDk" />
 </head>
